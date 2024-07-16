@@ -22,8 +22,8 @@ SELF_DIR="${SELF_PATHDIR##*/}"
 # XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 
 # Global consts
-MNT_SRC="${PWD}"
-MNT_DEST="/home"
+MNT_HOST="${PWD}"
+MNT_CTR="/home"
 
 # Global exports
 export HSA_OVERRIDE_GFX_VERSION=10.3.0
@@ -47,8 +47,8 @@ cmd_entrypoint_run() {
     -td \
     --replace \
     --entrypoint=/bin/ash \
-    -v "${MNT_SRC}":"${MNT_DEST}" \
     --name "${SELF_DIR}" \
+    -v "${MNT_HOST}":"${MNT_CTR}" \
     "${SELF_DIR}":latest
 }
 
