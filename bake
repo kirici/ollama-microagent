@@ -22,7 +22,7 @@ SELF_DIR="${SELF_PATHDIR##*/}"
 # XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 
 # Global consts
-MNT_HOST="${PWD}"
+MNT_HOST="${SELF_PATHDIR}/mission"
 MNT_CTR="/home"
 AGENT_OPENAI_API_ENDPOINT="http://localhost:11434/v1/chat/completions"
 AGENT_OPENAI_KEY="ollama"
