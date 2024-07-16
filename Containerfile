@@ -1,4 +1,4 @@
-FROM docker.io/library/node:lts-slim
+FROM docker.io/library/node:22-alpine
 
 RUN npm install -g @builder.io/micro-agent@v0.0.41
 

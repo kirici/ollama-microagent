@@ -46,8 +46,8 @@ cmd_entrypoint_run() {
   podman run \
     -td \
     --replace \
+    --entrypoint=/bin/ash \
     -v "${MNT_SRC}":"${MNT_DEST}" \
-    --entrypoint=/bin/bash \
     --name "${SELF_DIR}" \
     "${SELF_DIR}":latest
 }
