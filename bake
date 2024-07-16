@@ -1,0 +1,100 @@
+#!/bin/bash
+# Make and makefile replacement using bash.
+# Typical usage: ./bake <build|run|stop>
+set -euo pipefail
+
+
+# Logger funcs
+log_info() {
+    /bin/echo -e "\e[104m\e[97m[INFO]\e[49m\e[39m ${*}"
+}
+log_error() {
+    /bin/echo >&2 -e "\e[101m\e[97m[ERROR]\e[49m\e[39m ${*}"
+}
+
+
+# Global vars
+SELF_FILE="$0"
+SELF_PATHFILE="$(realpath "$0")"
+SELF_PATHDIR="$(dirname "${SELF_PATHFILE}")"
+SELF_DIR="${SELF_PATHDIR##*/}"
+# XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+# XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+
+# Global consts
+MNT_SRC="${PWD}"
+MNT_DEST="/home"
+
+
+# CLI subcommand: "build"
+cmd_entrypoint_build() {
+  podman tag "${SELF_DIR}":latest "${SELF_DIR}":previous || true
+  podman build \
+    --label build=auto \
+    -t "${SELF_DIR}":latest \
+    -f "${SELF_PATHDIR}"/Containerfile \
+    "${SELF_PATHDIR}"
+  podman rmi -fi "${SELF_DIR}":previous
+}
+
+# CLI subcommand: "run"
+cmd_entrypoint_run() {
+  podman run \
+    -td \
+    --replace \
+    -v "${MNT_SRC}":"${MNT_DEST}" \
+    --entrypoint=/bin/bash \
+    --name "${SELF_DIR}" \
+    "${SELF_DIR}":latest
+}
+
+# text for --help
+usage() {
+  echo "Usage: ${SELF_FILE} [OPTIONS] COMMAND"
+  echo
+  echo "A Makefile alternative in bash."
+  echo
+  echo "Commands:"
+  echo "  build                Build an image using Podman. Expects a Containerfile."
+  echo "  run                  Create a container out of an image built by this script."
+}
+
+# parse CLI args
+if ! args="$(getopt -o h --long help -n "$SELF_FILE" -- "$@")"; then
+  usage
+  exit 1
+fi
+eval set -- "$args"
+while [ "$#" -gt 0 ]; do
+  arg="$1"
+  shift
+  case "$arg" in
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  --)
+    break
+    ;;
+  *)
+    # Should not be reachable, which means we missed something in our "getopt" arguments above!
+    log_error "scripting error, unknown argument '$arg' when parsing script arguments"
+    exit 1
+    ;;
+  esac
+done
+
+command=$(echo "${1:-}" | sed -e "s/-/_/g")
+if [ -z "$command" ]; then
+  log_error "no command was specified. Run with --help to see the usage. Maybe you want to run \`$SELF_FILE build\`?"
+  exit 1
+fi
+
+if ! command -v "cmd_entrypoint_${command}" >/dev/null 2>&1; then
+  log_error "Unknown command: ${command}. Run with --help to see the usage."
+  exit 1
+fi
+
+# main
+shift
+"cmd_entrypoint_${command}" "$@"
