@@ -52,6 +52,11 @@ cmd_entrypoint_run() {
     "${SELF_DIR}":latest
 }
 
+# CLI subcommand: "stop"
+cmd_entrypoint_stop() {
+  podman rm -fi --time 0 "${SELF_DIR}"
+}
+
 # CLI subcommand: "ollama-serve"
 cmd_entrypoint_ollama_serve() {
   nohup ollama serve >& ollama.log &
@@ -72,6 +77,7 @@ usage() {
   echo "Commands:"
   echo "  build                Build an image using Podman. Expects a Containerfile."
   echo "  run                  Create a container out of an image built by this script."
+  echo "  stop                 Remove a running container if it exists, forcefully."
   echo "  ollama-serve         Start an ollama server."
   echo "  ollama-stop          Kill ollama processes."
 }
