@@ -25,6 +25,9 @@ SELF_DIR="${SELF_PATHDIR##*/}"
 MNT_SRC="${PWD}"
 MNT_DEST="/home"
 
+# Global exports
+export HSA_OVERRIDE_GFX_VERSION=10.3.0
+
 
 # CLI subcommand: "build"
 cmd_entrypoint_build() {
@@ -37,6 +40,7 @@ cmd_entrypoint_build() {
   podman rmi -fi "${SELF_DIR}":previous
 }
 
+
 # CLI subcommand: "run"
 cmd_entrypoint_run() {
   podman run \
@@ -48,6 +52,17 @@ cmd_entrypoint_run() {
     "${SELF_DIR}":latest
 }
 
+# CLI subcommand: "ollama-serve"
+cmd_entrypoint_ollama_serve() {
+  nohup ollama serve >& ollama.log &
+}
+
+# CLI subcommand: "ollama-serve"
+cmd_entrypoint_ollama_stop() {
+  pkill -f ollama
+}
+
+
 # text for --help
 usage() {
   echo "Usage: ${SELF_FILE} [OPTIONS] COMMAND"
@@ -57,6 +72,8 @@ usage() {
   echo "Commands:"
   echo "  build                Build an image using Podman. Expects a Containerfile."
   echo "  run                  Create a container out of an image built by this script."
+  echo "  ollama-serve         Start an ollama server."
+  echo "  ollama-stop          Kill ollama processes."
 }
 
 # parse CLI args
