@@ -56,7 +56,7 @@ cmd_entrypoint_build() {
 # CLI subcommand: "run"
 cmd_entrypoint_run() {
   podman run \
-    -td \
+    -it \
     --replace \
     --network host \
     --entrypoint=/bin/ash \
