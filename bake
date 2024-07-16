@@ -32,6 +32,15 @@ AGENT_MODEL="codellama"
 export HSA_OVERRIDE_GFX_VERSION=10.3.0
 
 
+# CLI subcommand: "env"
+cmd_entrypoint_env() {
+  env | sort
+  log_info "SELF_FILE: ${SELF_FILE}"
+  log_info "SELF_PATHFILE: ${SELF_PATHFILE}"
+  log_info "SELF_PATHDIR: ${SELF_PATHDIR}"
+  log_info "SELF_DIR: ${SELF_DIR}"
+}
+
 # CLI subcommand: "build"
 cmd_entrypoint_build() {
   podman tag "${SELF_DIR}":latest "${SELF_DIR}":previous || true
@@ -87,6 +96,7 @@ usage() {
   echo "  stop                 Remove a running container if it exists, forcefully."
   echo "  ollama-serve         Start an ollama server."
   echo "  ollama-stop          Kill ollama processes."
+  echo "  env                  Print env and global vars in this script."
 }
 
 # parse CLI args
