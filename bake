@@ -68,6 +68,25 @@ cmd_entrypoint_run() {
     "${SELF_DIR}":latest
 }
 
+# CLI subcommand: "exec"
+cmd_entrypoint_exec() {
+  podman run \
+    -td \
+    --replace \
+    --network host \
+    --entrypoint=/bin/ash \
+    --name "${SELF_DIR}" \
+    -e OPENAI_API_ENDPOINT="${AGENT_OPENAI_API_ENDPOINT}" \
+    -e OPENAI_KEY="${AGENT_OPENAI_KEY}" \
+    -e MODEL="${AGENT_MODEL}" \
+    -v "${MNT_HOST}":"${MNT_CTR}" \
+    "${SELF_DIR}":latest
+  podman exec \
+    -it \
+    "${SELF_DIR}" \
+    ash -c 'micro-agent ./main.go -t "sed -i '"'"'1d; $d'"'"' main.go && go test" -f ./main_test.go -p ./main.prompt.md'
+}
+
 # CLI subcommand: "stop"
 cmd_entrypoint_stop() {
   podman rm -fi --time 0 "${SELF_DIR}"
