@@ -1,3 +1,4 @@
+```go
 package main
 
 // Add is our function that sums two integers
@@ -14,3 +15,4 @@ func Subtract(x, y int) (res int) {
 func Multiply(x, y int) (res int) {
 	return x / y
 }
+```

@@ -84,7 +84,9 @@ cmd_entrypoint_exec() {
   podman exec \
     -it \
     "${SELF_DIR}" \
-    ash -c 'micro-agent ./main.go -t "sed -i '"'"'1d; $d'"'"' main.go && go test" -f ./main_test.go -p ./main.prompt.md'
+    ash -c 'micro-agent ./main.go \
+    -t "sed -i '"'"'s/\\\`\\\`\\\`go//g'"'"' main.go && sed -i '"'"'s/\\\`\\\`\\\`//g'"'"' main.go && go test" \
+    -f ./main_test.go -p ./main.prompt.md'
 }
 
 # CLI subcommand: "stop"
