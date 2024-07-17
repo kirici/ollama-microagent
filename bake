@@ -55,9 +55,9 @@ cmd_entrypoint_build() {
 
 # CLI subcommand: "run"
 cmd_entrypoint_run() {
+  cmd_entrypoint_stop
   podman run \
     -it \
-    --replace \
     --network host \
     --entrypoint=/bin/ash \
     --name "${SELF_DIR}" \
@@ -70,9 +70,9 @@ cmd_entrypoint_run() {
 
 # CLI subcommand: "exec"
 cmd_entrypoint_exec() {
+  cmd_entrypoint_stop
   podman run \
     -td \
-    --replace \
     --network host \
     --entrypoint=/bin/ash \
     --name "${SELF_DIR}" \
