@@ -11,7 +11,7 @@ func Subtract(x, y int) (res int) {
 	return x - y
 }
 
-// Subtract subtracts two integers
+// Multiply multiplies two integers
 func Multiply(x, y int) (res int) {
 	return x / y
 }
